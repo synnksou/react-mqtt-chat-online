@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import {
   Avatar,
+  AvatarGroup,
   Box,
   Button,
   HStack,
@@ -11,14 +12,15 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useEffectOnce } from 'react-use';
+import { useDeepCompareEffect, useEffectOnce } from 'react-use';
 
 const REGEX = /^([\w\s-]+):/;
+const REGEX_USER = /^([\w\s-]+) vient de se connecter/;
 
 const Chat = ({ username, client, topicMqtt }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
-
+  const [users, setUsers] = useState([]);
   const handleMessageChange = event => {
     setMessage(event.target.value);
   };
@@ -28,12 +30,6 @@ const Chat = ({ username, client, topicMqtt }) => {
     client.publish(topicMqtt, `${username}: ${message}`);
     console.log('Message sent', { topicMqtt, message });
     setMessage('');
-  };
-
-  const handleConnect = () => {
-    if (Boolean(topicMqtt !== 'chat')) {
-      client.subscribe(topicMqtt);
-    }
   };
 
   const handleMessage = (currentTopic, message) => {
@@ -51,6 +47,18 @@ const Chat = ({ username, client, topicMqtt }) => {
     };
   }, [client, topicMqtt]);
 
+  useDeepCompareEffect(() => {
+    messages.forEach(message => {
+      const user = REGEX.exec(message)[1];
+      if (
+        (!users.includes(user) && message.includes('vient de se connecter')) ||
+        !users.includes(user)
+      ) {
+        setUsers(users => [...users, user]);
+      }
+    });
+  }, [messages, users]);
+
   return (
     <VStack
       minH="100%"
@@ -58,21 +66,44 @@ const Chat = ({ username, client, topicMqtt }) => {
       justifyContent="center"
       alignItems="center"
     >
-      <Heading mb={3}>Bienvenue, {username}!</Heading>
+      <HStack justifyContent="space-between" maxW="600" w="100%">
+        <Heading mb={3}>Bienvenue, {username}!</Heading>
+        <AvatarGroup size="sm" max={3}>
+          {users.map(user => (
+            <Avatar name={user} />
+          ))}
+        </AvatarGroup>
+      </HStack>
       <Box minW={600} borderWidth="1px" borderRadius="lg" p={3} mb={3}>
         {messages.map((message, index) => {
           return (
-            <HStack
-              key={index}
-              spacing={1}
-              p={1}
-              justifyContent={
-                REGEX.exec(message)[1] === username ? 'flex-end' : 'flex-start'
-              }
-            >
-              <Avatar size="sm" name={REGEX.exec(message)[1]} />
-              <Text>{message}</Text>
-            </HStack>
+            <>
+              {message.includes('vient de se connecter') ? (
+                <HStack
+                  key={index}
+                  spacing={1}
+                  p={1}
+                  alignSelf="center"
+                  color="gray.400"
+                >
+                  <Text>{message}</Text>
+                </HStack>
+              ) : (
+                <HStack
+                  key={index}
+                  spacing={1}
+                  p={1}
+                  justifyContent={
+                    REGEX.exec(message)[1] === username
+                      ? 'flex-end'
+                      : 'flex-start'
+                  }
+                >
+                  <Avatar size="sm" name={REGEX.exec(message)[1]} />
+                  <Text>{message}</Text>
+                </HStack>
+              )}
+            </>
           );
         })}
       </Box>

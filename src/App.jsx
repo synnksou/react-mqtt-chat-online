@@ -3,36 +3,68 @@ import mqtt from 'mqtt';
 import Login from './components/Login';
 import Layout from './components/Layout';
 import TabChat from './components/Tabs';
-
-const client = mqtt.connect(
-  'wss://6bb60973616b45f3917851ac49512f88.s2.eu.hivemq.cloud:8884/mqtt',
-  {
-    username: 'efficomAntoine',
-    password: 'password59@',
-    clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
-    protocolId: 'MQTT',
-    protocolVersion: 4,
-    clean: true,
-    reconnectPeriod: 1000,
-    connectTimeout: 30 * 1000,
-    will: {
-      topic: 'WillMsg',
-      payload: 'Connection Closed abnormally..!',
-      qos: 0,
-      retain: false,
-    },
-    rejectUnauthorized: false,
-  },
-);
-
-console.log('Client subscribed ');
+import { useToast } from '@chakra-ui/react';
 
 function App() {
   const [username, setUsername] = useState('');
+  const [client, setClient] = useState();
+  const toast = useToast();
 
-  const handleConnect = username => {
-    setUsername(username);
-    client.subscribe('chat', { qos: 1 });
+  const handleConnect = async username => {
+    try {
+      const mqttClient = await mqtt.connect(
+        'wss://6bb60973616b45f3917851ac49512f88.s2.eu.hivemq.cloud:8884/mqtt',
+        {
+          username: 'efficomAntoine',
+          password: 'password59@',
+          clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
+          protocolId: 'MQTT',
+          protocolVersion: 4,
+          clean: true,
+          reconnectPeriod: 1000,
+          connectTimeout: 30 * 1000,
+          will: {
+            topic: 'WillMsg',
+            payload: 'Connection Closed abnormally..!',
+            qos: 0,
+            retain: false,
+          },
+          rejectUnauthorized: false,
+        },
+      );
+
+      mqttClient.on('connect', () => {
+        console.log('connected to MQTT broker');
+        setClient(mqttClient);
+        setUsername(username);
+        mqttClient.subscribe('chat', { qos: 1 });
+        mqttClient.publish('chat', `${username}: vient de se connecter`);
+
+        toast({
+          title: 'Connection réussi.',
+          description:
+            'Vous venez de vous connecter, bienvenue sur notre chat !',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+          position: 'top',
+        });
+      });
+
+      mqttClient.on('error', () => {
+        console.log('Error');
+        toast({
+          title: 'Oups..',
+          description: 'Une erreur est survenue',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+          position: 'top',
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
