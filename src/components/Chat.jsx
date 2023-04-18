@@ -15,7 +15,7 @@ import { useEffectOnce } from 'react-use';
 
 const REGEX = /^([\w\s-]+):/;
 
-const Chat = ({ username, client, tagMqtt }) => {
+const Chat = ({ username, client, topicMqtt }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
 
@@ -25,23 +25,31 @@ const Chat = ({ username, client, tagMqtt }) => {
 
   const handleSubmit = event => {
     event.preventDefault();
-    client.publish('chat', `${username}: ${message}`);
-    console.log("j'envoie le message");
+    client.publish(topicMqtt, `${username}: ${message}`);
+    console.log('Message sent', { topicMqtt, message });
     setMessage('');
   };
 
-  useEffectOnce(() => {
-    const handleMessage = (_, message) => {
-      console.log('test', { message });
-      setMessages(messages => [...messages, message.toString()]);
-    };
+  const handleConnect = () => {
+    if (Boolean(topicMqtt !== 'chat')) {
+      client.subscribe(topicMqtt);
+    }
+  };
 
+  const handleMessage = (currentTopic, message) => {
+    if (currentTopic === topicMqtt) {
+      setMessages(messages => [...messages, message.toString()]);
+    }
+  };
+
+  useEffect(() => {
+    console.log({ messages, message, topicMqtt });
     client.on('message', handleMessage);
 
     return () => {
       client.off('message', handleMessage);
     };
-  });
+  }, [client, topicMqtt]);
 
   return (
     <VStack
@@ -53,7 +61,6 @@ const Chat = ({ username, client, tagMqtt }) => {
       <Heading mb={3}>Bienvenue, {username}!</Heading>
       <Box minW={600} borderWidth="1px" borderRadius="lg" p={3} mb={3}>
         {messages.map((message, index) => {
-          console.log({ message, pseudo: REGEX.exec(message)[1], username });
           return (
             <HStack
               key={index}
