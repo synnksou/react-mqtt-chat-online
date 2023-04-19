@@ -56,6 +56,10 @@ const Chat = ({ username, client, topicMqtt }) => {
       ) {
         setUsers(users => [...users, user]);
       }
+
+      if (message.includes('vient de se déconnecter')) {
+        setUsers(users => users.filter(user => user !== message));
+      }
     });
   }, [messages, users]);
 
@@ -78,7 +82,8 @@ const Chat = ({ username, client, topicMqtt }) => {
         {messages.map((message, index) => {
           return (
             <>
-              {message.includes('vient de se connecter') ? (
+              {message.includes('vient de se connecter') ||
+              message.includes('vient de se déconnecter') ? (
                 <HStack
                   key={index}
                   spacing={1}

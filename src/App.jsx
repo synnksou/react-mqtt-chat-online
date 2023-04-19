@@ -37,7 +37,11 @@ function App() {
         console.log('connected to MQTT broker');
         setClient(mqttClient);
         setUsername(username);
+        // Chat General
         mqttClient.subscribe('chat', { qos: 1 });
+        // Chat privé qu'on écoute si notre username est dans le topic alors un chat s'ouvre avec l'emetteur
+        mqttClient.subscribe('private', { qos: 1 });
+        // On envoie un message de connection
         mqttClient.publish('chat', `${username}: vient de se connecter`);
 
         toast({
@@ -61,6 +65,11 @@ function App() {
           isClosable: true,
           position: 'top',
         });
+      });
+
+      mqttClient.on('disconnect', () => {
+        console.log('Disconnected');
+        mqttClient.publish('chat', `${username}: vient de se déconnecter`);
       });
     } catch (error) {
       console.log(error);

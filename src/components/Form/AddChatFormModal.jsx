@@ -12,6 +12,9 @@ import {
   Button,
   useToast,
   Text,
+  Switch,
+  FormControl,
+  FormLabel,
 } from '@chakra-ui/react';
 
 const AddChatFormModal = ({
@@ -24,7 +27,10 @@ const AddChatFormModal = ({
 }) => {
   const [topicMqtt, setTopicMqtt] = useState('');
   const toast = useToast();
+  const [isOneToOne, setIsOneToOne] = useState(false);
 
+  console.log({ isOneToOne });
+  // Create a new chat or join an existing one
   const handleSubmit = event => {
     console.log('lol');
     event.preventDefault();
@@ -71,14 +77,43 @@ const AddChatFormModal = ({
 
           <form onSubmit={handleSubmit}>
             <ModalBody>
-              <Text>Vous pouvez créé ou rejoindre un canal</Text>
-              <Stack spacing={3}>
-                <Input
-                  placeholder="Nom du chat (Topic MQTT)"
-                  value={topicMqtt}
-                  onChange={handleChangeTopicMqtt}
+              <FormControl display="flex" alignItems="center" py={3}>
+                <FormLabel htmlFor="email-alerts" mb="0">
+                  Conversation one to one ?
+                </FormLabel>
+                <Switch
+                  id="email-alerts"
+                  isChecked={isOneToOne}
+                  onChange={() => setIsOneToOne(!isOneToOne)}
                 />
-              </Stack>
+              </FormControl>
+
+              {!isOneToOne ? (
+                <>
+                  <Text>Vous pouvez créé ou rejoindre un canal</Text>
+                  <Stack spacing={3} py={3}>
+                    <Input
+                      placeholder="Nom du chat (Topic MQTT)"
+                      value={topicMqtt}
+                      onChange={handleChangeTopicMqtt}
+                    />
+                  </Stack>
+                </>
+              ) : (
+                <>
+                  <Text>
+                    Vous pouvez envoyer un message privé si la personne est
+                    connecté
+                  </Text>
+                  <Stack spacing={3} py={3}>
+                    <Input
+                      placeholder="Pseudo de la personne"
+                      value={topicMqtt}
+                      onChange={handleChangeTopicMqtt}
+                    />
+                  </Stack>
+                </>
+              )}
             </ModalBody>
 
             <ModalFooter>
