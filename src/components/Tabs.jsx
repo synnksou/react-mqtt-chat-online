@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Tabs,
   TabList,
@@ -15,6 +15,7 @@ import {
 import Chat from './Chat';
 import { MdAdd, MdClose } from 'react-icons/md';
 import AddChatFormModal from './Form/AddChatFormModal';
+import { useEffectOnce } from 'react-use';
 
 const TabChat = ({ username, client }) => {
   const [chats, setChats] = useState([]);
@@ -26,6 +27,39 @@ const TabChat = ({ username, client }) => {
     setChats(chats.filter(chat => chat.name !== topicMqtt));
   };
 
+  useEffect(() => {
+    // S'abonner à tous les topics commençant par "sensor/"
+
+    const regex = /^oneToOne\/(.+)talkWith(.+)$/;
+
+    // Gestionnaire pour les nouveaux messages reçus
+    const handleMessage = function (topic, message) {
+      // Vérifier si le topic est nouveau
+      console.log({ topic, message });
+      const match = topic.match(regex);
+
+      if (match) {
+        const topicMatchedUsername = match[1];
+        const topicMatched = match[2];
+        console.log({ topicMatchedUsername, topicMatched, topic });
+        if (topicMatchedUsername === username) {
+          const chatExists = chats.find(chat => chat.name === topic);
+          if (!chatExists) {
+            setChats(chats => [...chats, { name: topic }]);
+            client.subscribe(topic);
+            client.publish(topic, `${username}: vient de se connecter`);
+          }
+        }
+      }
+    };
+
+    client.on('message', handleMessage);
+
+    // Nettoyage lors de la déconnexion
+    return () => {
+      client.off('message', handleMessage);
+    };
+  }, [client, username, chats]);
   return (
     <>
       <AddChatFormModal
