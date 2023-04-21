@@ -1,6 +1,7 @@
 # Realtime Chat Application
 
-![Demo](react-mqtt-chat.netlify.app)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/21cab73b-ee6d-423a-81b3-d995ffe49498/deploy-status)](https://app.netlify.com/sites/react-mqtt-chat/deploys)
+[Demo](react-mqtt-chat.netlify.app)
 
 ## Description
 
