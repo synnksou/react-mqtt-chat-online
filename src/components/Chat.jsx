@@ -46,7 +46,7 @@ const Chat = ({ username, client, topicMqtt }) => {
     };
   }, [client, topicMqtt]);
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     messages.forEach(message => {
       const user = REGEX.exec(message)[1];
       if (
