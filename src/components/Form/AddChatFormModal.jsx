@@ -32,10 +32,19 @@ const AddChatFormModal = ({
   console.log({ isOneToOne });
   // Create a new chat or join an existing one
   const handleSubmit = event => {
-    console.log('lol');
     event.preventDefault();
     try {
-      client.subscribe(topicMqtt, { qos: 1 });
+      if (isOneToOne) {
+        //setTopicMqtt(`oneToOne/${topicMqtt} talkWidth ${username}`);
+        const oneToOneTopic = `oneToOne/${topicMqtt}talkWidth${username}`;
+        console.log({ topicMqtt });
+        client.subscribe(oneToOneTopic);
+        client.publish(oneToOneTopic, `${username}: vient de se connecter`);
+      } else {
+        client.subscribe(topicMqtt);
+        client.publish(topicMqtt, `${username}: vient de se connecter`);
+      }
+
       setChats([...chats, { name: topicMqtt }]);
       toast({
         title: 'Nouveau chat créé.',
@@ -46,7 +55,6 @@ const AddChatFormModal = ({
         isClosable: true,
         position: 'top',
       });
-      client.publish(topicMqtt, `${username}: vient de se connecter`);
       onClose();
       console.log('New chat created');
     } catch (error) {

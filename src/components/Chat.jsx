@@ -15,7 +15,6 @@ import {
 import { useDeepCompareEffect, useEffectOnce } from 'react-use';
 
 const REGEX = /^([\w\s-]+):/;
-const REGEX_USER = /^([\w\s-]+) vient de se connecter/;
 
 const Chat = ({ username, client, topicMqtt }) => {
   const [messages, setMessages] = useState([]);

@@ -15,6 +15,7 @@ import {
 import Chat from './Chat';
 import { MdAdd, MdClose } from 'react-icons/md';
 import AddChatFormModal from './Form/AddChatFormModal';
+import { useEffectOnce } from 'react-use';
 
 const TabChat = ({ username, client }) => {
   const [chats, setChats] = useState([]);
@@ -25,6 +26,36 @@ const TabChat = ({ username, client }) => {
     client.publish(topicMqtt, `${username}: vient de se déconnecter`);
     setChats(chats.filter(chat => chat.name !== topicMqtt));
   };
+  /* 
+  useEffectOnce(() => {
+    // S'abonner à tous les topics commençant par "sensor/"
+
+    // Gestionnaire pour les nouveaux messages reçus
+    client.on('message', function (topic, message) {
+      // Vérifier si le topic est nouveau
+      console.log({ topic, message });
+      const regex = /^oneToOne\/(.+)talkWidth(.+)$/;
+      const match = topic.match(regex);
+
+      const topicMatchedUsername = match[1];
+      console.log({ topicMatchedUsername, topicMatched });
+      if (match) {
+        if (topicMatchedUsername === username) {
+          const chatExists = chats.find(chat => chat.topic === topic);
+          if (!chatExists) {
+            setChats(chats => [...chats, { topic }]);
+            client.subscribe(topic);
+            client.publish(topic, `${username}: vient de se connecter`);
+          }
+        }
+      }
+    });
+
+    // Nettoyage lors de la déconnexion
+    return () => {
+      client.end();
+    };
+  }); */
 
   return (
     <>

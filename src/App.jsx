@@ -39,8 +39,9 @@ function App() {
         setUsername(username);
         // Chat General
         mqttClient.subscribe('chat', { qos: 1 });
+        mqttClient.subscribe('oneToOne/#');
+
         // Chat privé qu'on écoute si notre username est dans le topic alors un chat s'ouvre avec l'emetteur
-        mqttClient.subscribe('private', { qos: 1 });
         // On envoie un message de connection
         mqttClient.publish('chat', `${username}: vient de se connecter`);
 
@@ -55,8 +56,8 @@ function App() {
         });
       });
 
-      mqttClient.on('error', () => {
-        console.log('Error');
+      mqttClient.on('error', e => {
+        console.log('Error', e);
         toast({
           title: 'Oups..',
           description: 'Une erreur est survenue',
