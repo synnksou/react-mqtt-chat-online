@@ -15,6 +15,8 @@ To achieve this functionality, the application uses the following MQTT commands:
 - `subscribe`: Used to listen to messages published on a specific topic. This command allows users to connect to a chat room and receive real-time updates as new messages arrive.
 - `unsubscribe`: Used to disconnect from a specific topic. This command allows users to leave a chat room and stop receiving real-time updates.
 - `message`: This event is triggered when a message is published to a specific topic. The application listens for this event and processes incoming messages, displaying them in the UI in real-time.
+- `connect`: This event is used for connect to MqttBroker.
+
 
 Using MQTT with React allows for a seamless real-time chat experience, and Chakra-UI provides a polished and intuitive user interface. With this application, users can connect with others in real-time and communicate instantly, making it perfect for remote teams, online communities, or anyone who needs to stay connected in real-time.
 
@@ -47,6 +49,7 @@ The Chat.jsx component handles the logic for the chat. The handleMessage functio
 - Vite
 - Node.js (v14.15.0 ou plus récent)
 - Lodash
+- HiveMQ Cloud
 
 ## Installation
 
