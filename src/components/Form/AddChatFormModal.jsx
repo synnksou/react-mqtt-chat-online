@@ -25,21 +25,20 @@ const AddChatFormModal = ({
   client,
   username,
 }) => {
-  const [topicMqtt, setTopicMqtt] = useState('');
   const toast = useToast();
+  const [topicMqtt, setTopicMqtt] = useState('');
   const [isOneToOne, setIsOneToOne] = useState(false);
 
-  console.log({ isOneToOne });
   // Create a new chat or join an existing one
   const handleSubmit = event => {
     event.preventDefault();
     try {
       if (isOneToOne) {
-        //setTopicMqtt(`oneToOne/${topicMqtt} talkWith ${username}`);
         const oneToOneTopic = `oneToOne/${topicMqtt}talkWith${username}`;
-        console.log({ topicMqtt });
+
         client.subscribe(oneToOneTopic);
         client.publish(oneToOneTopic, `${username}: vient de se connecter`);
+
         setChats([...chats, { name: oneToOneTopic }]);
       } else {
         client.subscribe(topicMqtt);

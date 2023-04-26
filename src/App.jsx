@@ -10,14 +10,14 @@ function App() {
   const [client, setClient] = useState();
   const toast = useToast();
 
-  const handleConnect = async username => {
+  const handleConnect = username => {
     try {
-      const mqttClient = await mqtt.connect(
+      const mqttClient = mqtt.connect(
         'wss://6bb60973616b45f3917851ac49512f88.s2.eu.hivemq.cloud:8884/mqtt',
         {
           username: 'efficomAntoine',
           password: 'password59@',
-          clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
+          clientId: username, // Username unique
           protocolId: 'MQTT',
           protocolVersion: 4,
           clean: true,
@@ -68,12 +68,31 @@ function App() {
         });
       });
 
-      mqttClient.on('disconnect', () => {
-        console.log('Disconnected');
-        mqttClient.publish('chat', `${username}: vient de se déconnecter`);
+      mqttClient.on('close', () => {
+        console.log('Connection closed');
+        mqttClient.end();
+        toast({
+          title: 'Oups..',
+          description:
+            'Vous avez été déconnecté. Par timeout ou volontairement par un autre user connecté avec votre username',
+          status: 'warning',
+          duration: 9000,
+          isClosable: true,
+          position: 'top',
+        });
+        setUsername('');
       });
     } catch (error) {
       console.log(error);
+      toast({
+        title: 'Oups..',
+        description: 'Une erreur est survenue' + error,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      });
+      mqttClient.end();
     }
   };
 

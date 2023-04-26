@@ -5,10 +5,8 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Button,
   IconButton,
   useDisclosure,
-  Box,
   Text,
   HStack,
 } from '@chakra-ui/react';
