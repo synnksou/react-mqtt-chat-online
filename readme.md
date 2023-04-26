@@ -54,8 +54,7 @@ The Chat.jsx component handles the logic for the chat. The handleMessage functio
 2. Install [Yarn](https://yarnpkg.com/getting-started/install).
 3. Clone the repository and navigate to the project directory.
 4. Run `yarn install` to install the dependencies.
-5. Create a `.env` file and add the following variables:
-6. Run `yarn dev` to start the development server.
+5. Run `yarn dev` to start the development server.
 
 ## License
 
