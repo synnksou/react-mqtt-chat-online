@@ -35,6 +35,10 @@ My application is based on the App.jsx file, where the MQTT connection is establ
 The Chat.jsx component handles the logic for the chat. The handleMessage function sets the messages at the appropriate location, and the component listens to and manages users by chat.
 
 
+### React Tree Comp
+
+![image](https://user-images.githubusercontent.com/40544802/234679125-c853ddea-493a-430e-9f77-a6b7f1b195f8.png)
+
 ## Technologies Used
 
 - React
