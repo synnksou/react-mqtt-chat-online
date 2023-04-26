@@ -12,7 +12,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useDeepCompareEffect, useEffectOnce } from 'react-use';
 
 const REGEX = /^([\w\s-]+):/;
 
@@ -20,6 +19,7 @@ const Chat = ({ username, client, topicMqtt }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [users, setUsers] = useState([]);
+
   const handleMessageChange = event => {
     setMessage(event.target.value);
   };
