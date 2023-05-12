@@ -15,8 +15,8 @@ function App() {
       const mqttClient = mqtt.connect(
         'wss://6bb60973616b45f3917851ac49512f88.s2.eu.hivemq.cloud:8884/mqtt',
         {
-          username: 'efficomAntoine',
-          password: 'password59@',
+          username: 'efficomAntoineMqtt',
+          password: 'Password59@',
           clientId: username, // Username unique
           protocolId: 'MQTT',
           protocolVersion: 4,
