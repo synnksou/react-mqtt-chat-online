@@ -13,7 +13,7 @@ function App() {
   const handleConnect = username => {
     try {
       const mqttClient = mqtt.connect(
-        'wss://6bb60973616b45f3917851ac49512f88.s2.eu.hivemq.cloud:8884/mqtt',
+        'wss://3b5b91ea152d4e57ad9b34c41c75307a.s1.eu.hivemq.cloud:8884/mqtt',
         {
           username: 'efficomAntoineMqtt',
           password: 'Password59@',
